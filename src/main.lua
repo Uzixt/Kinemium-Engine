@@ -4,18 +4,18 @@ end
 
 local sandboxer = require("./modules/sandboxer")
 local filesystem = require("./modules/filesystem")
-local kinetica_env = require("./enviroment/get")
+local Kinemium_env = require("./enviroment/get")
 local task = zune.task
 local threads = {}
-local kinetica = {}
+local Kinemium = {}
 
-local renderer = require("@kinetica.3d")
+local renderer = require("@Kinemium.3d")
 
-kinetica_env = kinetica_env(renderer)
+Kinemium_env = Kinemium_env(renderer)
 
 --local raygui = require("@raygui")
 
-sandboxer.enviroment = kinetica_env
+sandboxer.enviroment = Kinemium_env
 
 local function execute(path, entry)
 	local code = filesystem.read(path)
@@ -42,13 +42,13 @@ filesystem.entryloop("src/sandboxed/internals", function(e)
 	callback(e, "src/sandboxed/internals")
 end)
 
-function kinetica:playtest()
+function Kinemium:playtest()
 	filesystem.entryloop("src/sandboxed", function(e)
 		callback(e, "src/sandboxed")
 	end)
 end
 
-renderer.kinetica_camera.Parent = sandboxer.enviroment.workspace
+renderer.Kinemium_camera.Parent = sandboxer.enviroment.workspace
 
-kinetica:playtest()
+Kinemium:playtest()
 renderer.Run()

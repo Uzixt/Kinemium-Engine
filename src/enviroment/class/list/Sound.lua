@@ -1,4 +1,4 @@
-local Signal = require("@kinetica.signal")
+local Signal = require("@Kinemium.signal")
 
 local propTable = {
 	SoundId = "./src/assets/sounds/bqqchickenalert.mp3",

@@ -42,12 +42,12 @@ Lighting.InitRenderer = function(renderer, renderer_signal)
 			local ambient = Lighting.Ambient
 			local brightness = Lighting.Brightness
 			renderer.SetShaderUniform(
-				"kinetica",
+				"Kinemium",
 				"globalAmbient",
 				{ ambient.R / 255, ambient.G / 255, ambient.B / 255 },
 				4
 			)
-			renderer.SetShaderUniform("kinetica", "brightness", brightness, 0)
+			renderer.SetShaderUniform("Kinemium", "brightness", brightness, 0)
 		end
 	end)
 end

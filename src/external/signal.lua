@@ -1,4 +1,4 @@
--- KineticaSignal.lua
+-- KinemiumSignal.lua
 local Signal = {}
 Signal.__index = Signal
 

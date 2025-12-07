@@ -2,7 +2,7 @@ local Vector3 = require("@Vector3")
 local Color3 = require("@Color3")
 local CFrame = require("@CFrame")
 local Enum = require("@EnumMap")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 local Vector2 = require("@Vector2")
 
 local Button1Down = signal.new()
@@ -14,7 +14,7 @@ local WheelForward = signal.new()
 local WheelBackward = signal.new()
 
 local propTable = {
-	Icon = Enum.KineticaMouseCursor.MOUSE_CURSOR_DEFAULT,
+	Icon = Enum.KinemiumMouseCursor.MOUSE_CURSOR_DEFAULT,
 	Target = nil,
 	Hit = nil,
 	UnitRay = nil,

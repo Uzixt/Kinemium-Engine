@@ -1,5 +1,5 @@
 local Instance = require("@Instance")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 local StarterGui = require("@StarterGui")
 local Workspace = require("@Workspace")
 local Enum = require("@EnumMap")
@@ -61,7 +61,7 @@ end
 Players.LocalPlayer = nil
 Players.SetupClient = true
 
-StarterGui.InitRenderer = function(renderer, signal, starterGui)
+Players.InitRenderer = function(renderer, signal, starterGui)
 	local lib = renderer.lib
 	if Players.SetupClient == true then
 		-- create with default player name & id

@@ -4,11 +4,12 @@
 local raylib = require("./external/raylib")
 --local raygui = require("@raygui")
 
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 local mb = require("./renderer/mesh")
 local texture = require("./renderer/texture")
 local Vector2 = require("@Vector2")
 local shader3d = require("./renderer/shader")
+local skybox = require("./renderer/skybox")
 local mainSignal = signal.new()
 
 local CFrame = require("@CFrame")
@@ -16,15 +17,22 @@ local Instance = require("@Instance")
 local Vector3 = require("@Vector3")
 local camera_addon = require("@Camera")
 
-local kinetica_camera = Instance.new("CurrentCamera")
-camera_addon.callback(kinetica_camera)
-kinetica_camera.Name = "CurrentCamera"
+-- comment this until i find a way to make the shitty dll error stop
+-- help me pls.........
+-- please speed i need this
+--local r3d = require("@r3d")
+
+local Kinemium_camera = Instance.new("Camera")
+camera_addon.callback(Kinemium_camera)
+Kinemium_camera.Name = "CurrentCamera"
 
 local loadedMaterials = {}
 local meshlib = {}
 local fontRegistry = {}
-local rendering_3d_hooks = {}
-local rendering_2d_hooks = {}
+
+local renderPool3d = {}
+local renderPool2d = {}
+local shaderPool2d = {}
 
 local global_registry = {}
 
@@ -33,14 +41,6 @@ local const = raylib.const
 local structs = raylib.structs
 local task = zune.task
 local ffi = zune.ffi
-
-local sky_cubemap = "./src/assets/sky/default/cubemap.png"
-
-local Material = ffi.struct({
-	{ shader = structs.Shader },
-	{ maps = ffi.types.pointer },
-	{ params = ffi.types.float:array(4) },
-})
 
 local screenWidth = 1800
 local screenHeight = 700
@@ -144,22 +144,23 @@ local function UpdateFreecam(camera: raylib.Camera3D, delta: number)
 	local lookAt =
 		CFrame.lookAt(Vector3.new(cameraPos.x, cameraPos.y, cameraPos.z), Vector3.new(target.x, target.y, target.z))
 
-	kinetica_camera.CFrame = lookAt
-	kinetica_camera.Position = Vector3.new(cameraPos.x, cameraPos.y, cameraPos.z)
-	kinetica_camera.FieldOfView = 70
+	Kinemium_camera.CFrame = lookAt
+	Kinemium_camera.Position = Vector3.new(cameraPos.x, cameraPos.y, cameraPos.z)
+	Kinemium_camera.FieldOfView = 70
 end
 
 local partRegistry = {}
 local guiRegistry = {}
 
-lib.InitWindow(screenWidth, screenHeight, "Kinetica Engine")
+lib.InitWindow(screenWidth, screenHeight, "Kinemium Engine")
 lib.SetTargetFPS(0)
-lib.GuiLoadStyle("./src/themes/Kinetica2.rgs")
+--lib.GuiLoadStyle("./src/themes/Kinemium2.rgs")
 
 local engineIcon = lib.LoadImage("./src/assets/icon/icon.png")
 lib.SetWindowIcon(engineIcon)
 --lib.DisableCursor()
 
+skybox.Load()
 meshlib = mb(lib)
 
 local material_index = 0
@@ -361,143 +362,150 @@ local function drawPart(part)
 	mainSignal:Fire("Rendered", part)
 end
 
+local function step(time)
+	--lib.SetWindowState(const.ConfigFlags.FLAG_BORDERLESS_WINDOWED_MODE)
+	local activeLights = {}
+	local delta = lib.GetFrameTime()
+	mainSignal:Fire("PreRender", delta)
+
+	local runtimelib = {
+		lib = lib,
+		drawModel = drawModel,
+		drawPart = drawPart,
+		loadMaterialOnModel = loadMaterialOnModel,
+		LoadShader = LoadShader,
+		structs = structs,
+		const = const,
+		time = time,
+		GetFont = function(name)
+			if fontRegistry[name] then
+				return fontRegistry[name]
+			end
+		end,
+		gbSet = function(property, value)
+			global_registry[property] = value
+		end,
+
+		gbGet = function(property)
+			return global_registry[property]
+		end,
+	}
+
+	mainSignal:Fire("RenderStepped", delta)
+	mainSignal:Fire("MouseData", {
+		position = Vector2.new(lib.GetMouseX(), lib.GetMouseY()),
+		delta = lib.GetMouseDelta(),
+		mouse_wheel_move = lib.GetMouseWheelMove(),
+		mouse_wheel_delta = lib.GetMouseWheelMoveV(),
+		Button1Down = lib.IsMouseButtonDown(0) == 1,
+		Button1Pressed = lib.IsMouseButtonPressed(0) == 1,
+		Button1Released = lib.IsMouseButtonReleased(0) == 1,
+		Button2Down = lib.IsMouseButtonDown(1) == 1,
+		Button2Pressed = lib.IsMouseButtonPressed(1) == 1,
+		Button2Released = lib.IsMouseButtonReleased(1) == 1,
+		Button3Down = lib.IsMouseButtonDown(2) == 1,
+		Button3Pressed = lib.IsMouseButtonPressed(2) == 1,
+		Button3Released = lib.IsMouseButtonReleased(2) == 1,
+
+		-- cursor states
+		is_cursor_hidden = lib.IsCursorHidden(),
+		is_cursor_inbounds = lib.IsCursorOnScreen(),
+	})
+
+	time += delta
+
+	UpdateFreecam(camera, delta)
+
+	for name, keycode in pairs(const.KeyboardKey) do
+		if lib.IsKeyPressed(keycode) == 1 then
+			mainSignal:Fire("Pressed", keycode)
+		end
+		if lib.IsKeyDown(keycode) == 1 then
+			mainSignal:Fire("IsKeyDown", keycode)
+		end
+		if lib.IsKeyReleased(keycode) == 1 then
+			mainSignal:Fire("IsKeyReleased", keycode)
+		end
+		if lib.IsKeyUp(keycode) == 1 then
+			mainSignal:Fire("IsKeyUp", keycode)
+		end
+
+		local mouseDelta = lib.GetMouseDelta()
+		if mouseDelta.x ~= 0 or mouseDelta.y ~= 0 then
+			mainSignal:Fire("MouseMoved", mouseDelta)
+		end
+
+		local wheel = lib.GetMouseWheelMove()
+		if wheel ~= 0 then
+			mainSignal:Fire("MouseWheel", wheel)
+		end
+	end
+
+	lib.BeginDrawing()
+	lib.BeginMode3D(camera)
+	lib.ClearBackground(const.BLUE)
+	lib.rlEnableBackfaceCulling()
+	lib.rlEnableDepthTest()
+	skybox.Draw(vector.create(0, 0, 0))
+
+	for _, part in pairs(partRegistry) do
+		local partData = part()
+		if partData.BaseClass == "Kinemium.light" then
+			table.insert(activeLights, {
+				pos = { partData.Position.X, partData.Position.Y, partData.Position.Z },
+				intensity = partData.Range,
+				color = { partData.Color.R / 255, partData.Color.G / 255, partData.Color.B / 255 },
+			})
+		end
+	end
+
+	shader3d(lib, loopshader, lighting, const, cameraPos, activeLights, SetShaderUniform, time)
+
+	for _, v in pairs(renderPool3d) do
+		v(runtimelib)
+	end
+
+	for _, part in pairs(partRegistry) do
+		local partData = part()
+		if partData.BaseClass ~= "Kinemium.light" then
+			drawPart(partData)
+		end
+	end
+
+	lib.EndShaderMode()
+	lib.rlDisableBackfaceCulling()
+	lib.rlDisableDepthTest()
+
+	lib.EndMode3D()
+
+	for _, gui in pairs(guiRegistry) do
+		-- {render = function(), object = function()}
+		for _, shader2D in pairs(shaderPool2d) do
+			lib.BeginShaderMode(shader2D)
+		end
+		gui.render(lib, gui.object(), time, structs, runtimelib)
+		lib.EndShaderMode()
+	end
+
+	for _, v in pairs(renderPool2d) do
+		v(runtimelib)
+	end
+
+	table.clear(activeLights)
+
+	lib.DrawFPS(10, 10)
+
+	lib.EndDrawing()
+	mainSignal:Fire("Heartbeat", delta)
+
+	task.wait(0)
+end
+
 local function run()
 	local time = 0.0
 
 	while lib.WindowShouldClose() == 0 do
-		lib.SetWindowState(const.ConfigFlags.FLAG_BORDERLESS_WINDOWED_MODE)
-		local activeLights = {}
-		local delta = lib.GetFrameTime()
-		local runtimelib = {
-			lib = lib,
-			drawModel = drawModel,
-			drawPart = drawPart,
-			loadMaterialOnModel = loadMaterialOnModel,
-			LoadShader = LoadShader,
-			structs = structs,
-			const = const,
-			time = time,
-			GetFont = function(name)
-				if fontRegistry[name] then
-					return fontRegistry[name]
-				end
-			end,
-			gbSet = function(property, value)
-				global_registry[property] = value
-			end,
-
-			gbGet = function(property)
-				return global_registry[property]
-			end,
-		}
-
-		--local skybox = meshlib.GetModelRegistry().block
-		--local skybox_image = lib.LoadImage(sky_cubemap)
-		--local skyCubemap = lib.LoadTextureCubemap(skybox_image, const.CubemapLayout.CUBEMAP_LAYOUT_AUTO_DETECT)
-
-		mainSignal:Fire("RenderStepped", delta)
-		mainSignal:Fire("MouseData", {
-			position = Vector2.new(lib.GetMouseX(), lib.GetMouseY()),
-			delta = lib.GetMouseDelta(),
-			mouse_wheel_move = lib.GetMouseWheelMove(),
-			mouse_wheel_delta = lib.GetMouseWheelMoveV(),
-			Button1Down = lib.IsMouseButtonDown(0) == 1,
-			Button1Pressed = lib.IsMouseButtonPressed(0) == 1,
-			Button1Released = lib.IsMouseButtonReleased(0) == 1,
-			Button2Down = lib.IsMouseButtonDown(1) == 1,
-			Button2Pressed = lib.IsMouseButtonPressed(1) == 1,
-			Button2Released = lib.IsMouseButtonReleased(1) == 1,
-			Button3Down = lib.IsMouseButtonDown(2) == 1,
-			Button3Pressed = lib.IsMouseButtonPressed(2) == 1,
-			Button3Released = lib.IsMouseButtonReleased(2) == 1,
-
-			-- cursor states
-			is_cursor_hidden = lib.IsCursorHidden(),
-			is_cursor_inbounds = lib.IsCursorOnScreen(),
-		})
-
-		time += delta
-
-		UpdateFreecam(camera, delta)
-
-		for name, keycode in pairs(const.KeyboardKey) do
-			if lib.IsKeyPressed(keycode) == 1 then
-				mainSignal:Fire("Pressed", keycode)
-			end
-			if lib.IsKeyDown(keycode) == 1 then
-				mainSignal:Fire("IsKeyDown", keycode)
-			end
-			if lib.IsKeyReleased(keycode) == 1 then
-				mainSignal:Fire("IsKeyReleased", keycode)
-			end
-			if lib.IsKeyUp(keycode) == 1 then
-				mainSignal:Fire("IsKeyUp", keycode)
-			end
-
-			local mouseDelta = lib.GetMouseDelta()
-			if mouseDelta.x ~= 0 or mouseDelta.y ~= 0 then
-				mainSignal:Fire("MouseMoved", mouseDelta)
-			end
-
-			local wheel = lib.GetMouseWheelMove()
-			if wheel ~= 0 then
-				mainSignal:Fire("MouseWheel", wheel)
-			end
-		end
-
-		lib.BeginDrawing()
-		lib.ClearBackground(const.SKYBLUE)
-
-		lib.BeginMode3D(camera)
-
-		--print(skyCubemap)
-		--loadMaterialOnModel(skybox, skyCubemap, const.MaterialMapIndex.MATERIAL_MAP_CUBEMAP)
-
-		for _, part in pairs(partRegistry) do
-			local partData = part()
-			if partData.BaseClass == "kinetica.light" then
-				table.insert(activeLights, {
-					pos = { partData.Position.X, partData.Position.Y, partData.Position.Z },
-					intensity = partData.Range,
-					color = { partData.Color.R / 255, partData.Color.G / 255, partData.Color.B / 255 },
-				})
-			end
-		end
-
-		shader3d(lib, loopshader, lighting, const, cameraPos, activeLights, SetShaderUniform, time)
-
-		for _, v in pairs(rendering_3d_hooks) do
-			v(runtimelib)
-		end
-
-		for _, part in pairs(partRegistry) do
-			local partData = part()
-			if partData.BaseClass ~= "kinetica.light" then
-				drawPart(partData)
-			end
-		end
-
-		lib.EndShaderMode()
-
-		lib.EndMode3D()
-
-		for _, gui in pairs(guiRegistry) do
-			-- {render = function(), object = function()}
-			gui.render(lib, gui.object(), time, structs, runtimelib)
-		end
-
-		for _, v in pairs(rendering_2d_hooks) do
-			v(runtimelib)
-		end
-
-		table.clear(activeLights)
-
-		lib.DrawFPS(10, 10)
-
-		lib.EndDrawing()
-		mainSignal:Fire("Heartbeat", delta)
-
-		task.wait(0)
+		step(time)
 	end
 
 	for shaderName, _ in pairs(activeShaders) do
@@ -511,6 +519,7 @@ return {
 		table.insert(partRegistry, data)
 		mainSignal:Fire("AddedPartToRenderPool", data())
 	end,
+	Step = step,
 	AddToGuiRenderingPool = function(object, renderFn)
 		table.insert(guiRegistry, {
 			render = renderFn,
@@ -525,7 +534,7 @@ return {
 	structs = structs,
 
 	-- camera Instance
-	kinetica_camera = kinetica_camera,
+	Kinemium_camera = Kinemium_camera,
 
 	-- Shader API
 	LoadShader = LoadShader,
@@ -536,17 +545,23 @@ return {
 		return activeShaders
 	end,
 	LoadShaderCode = LoadShaderCode,
+	Add2DShader = function(shaderName: string, vertexPath: string?, fragmentPath: string?)
+		local shader = LoadShader(shaderName, vertexPath, fragmentPath)
+		if shader then
+			table.insert(shaderPool2d, shader)
+		end
+	end,
 
 	-- Mesh API
 	mesh = meshlib,
 
 	-- 3DHook
 	Add3DStack = function(v)
-		table.insert(rendering_3d_hooks, v)
+		table.insert(renderPool3d, v)
 	end,
 
 	Add2DStack = function(v)
-		table.insert(rendering_2d_hooks, v)
+		table.insert(renderPool2d, v)
 	end,
 
 	-- Font

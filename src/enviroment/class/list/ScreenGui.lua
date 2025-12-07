@@ -4,7 +4,7 @@ local CFrame = require("@CFrame")
 local Enum = require("@EnumMap")
 local UDim2 = require("@UDim2")
 local UDim = require("@UDim")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 local Vector2 = require("@Vector2")
 
 return {

@@ -1,4 +1,4 @@
-local KineticaShaderService = game:GetService("KineticaShaderService")
+local KinemiumShaderService = game:GetService("KinemiumShaderService")
 
 -- Create terrain base (large flat island)
 local function createTerrain()

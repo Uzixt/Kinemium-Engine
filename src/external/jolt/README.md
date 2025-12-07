@@ -18,7 +18,7 @@ Initializes the Jolt Physics library. Must be called before using any other Jolt
 
 **Lua Usage:**
 ```lua
-local jolt = kinetica.jolt
+local jolt = Kinemium.jolt
 local success = jolt.lib.JPH_Init()
 if not success then
     error("Failed to initialize Jolt Physics")
@@ -331,7 +331,7 @@ Draws a debug box.
 ### Basic Physics Setup
 
 ```lua
-local jolt = kinetica.jolt
+local jolt = Kinemium.jolt
 local lib = jolt.lib
 
 -- Initialize Jolt

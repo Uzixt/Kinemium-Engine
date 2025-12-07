@@ -190,8 +190,8 @@ enumTable.PartType = {
 	Wedge = "wedge",
 	Torus = "torus",
 	CornerWedge = "cornerwedge",
-	Mesh = "kineticamesh", -- Custom mesh
-	Terrain = "kineticaterrain",
+	Mesh = "Kinemiummesh", -- Custom mesh
+	Terrain = "Kinemiumterrain",
 }
 
 enumTable.Material = {
@@ -231,7 +231,7 @@ enumTable.MouseButton = {
 	Middle = 2,
 }
 
-enumTable.KineticaMouseCursor = {
+enumTable.KinemiumMouseCursor = {
 	MOUSE_CURSOR_DEFAULT = 0, -- Default pointer shape
 	MOUSE_CURSOR_ARROW = 1, -- Arrow shape
 	MOUSE_CURSOR_IBEAM = 2, -- Text writing cursor shape
@@ -325,7 +325,7 @@ enumTable.TextTruncate = {
 	Line = 3,
 }
 
-enumTable.KineticaGameDimension = {
+enumTable.KinemiumGameDimension = {
 	["2D"] = 1,
 	["3D"] = 2,
 }

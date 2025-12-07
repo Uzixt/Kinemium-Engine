@@ -1,5 +1,5 @@
 local Instance = {}
-local Signal = require("@kinetica.signal")
+local Signal = require("@Kinemium.signal")
 local task = zune.task
 
 -- Instance metatable

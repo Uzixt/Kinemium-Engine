@@ -1,15 +1,15 @@
 -- devcell
 
-local KineticaRaylib = game:GetService("KineticaRaylib")
+local KinemiumRaylib = game:GetService("KinemiumRaylib")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local renderer = KineticaRaylib.renderer
-local rl = KineticaRaylib.lib
-local structs = KineticaRaylib.structs
+local renderer = KinemiumRaylib.renderer
+local rl = KinemiumRaylib.lib
+local structs = KinemiumRaylib.structs
 
 local windowRegistry = {}
 
-local window = require("@kinetica.rayguiwindow")(rl, structs)
+local window = require("@Kinemium.rayguiwindow")(rl, structs)
 
 local function create_window(title, frame)
 	repeat

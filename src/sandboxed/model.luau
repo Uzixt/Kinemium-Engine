@@ -5,7 +5,7 @@ local model = Instance.new("Model")
 local WhitePart = Instance.new("Part")
 WhitePart.Position = Vector3.new(0, 9, 0)
 WhitePart.Size = Vector3.new(8, 8, 8)
-WhitePart.Shader = "kinetica"
+WhitePart.Shader = "Kinemium"
 WhitePart.Transparency = 0.5
 WhitePart.Color = Color3.new(0.47451, 0.47451, 0.47451)
 WhitePart.Parent = model
@@ -19,7 +19,7 @@ print(workspace:GetChildren())
 local newPart = Instance.new("MeshPart")
 newPart.Position = Vector3.new(0, 9, 9)
 newPart.Size = Vector3.new(5, 5, 5)
-newPart.Shader = "kinetica"
+newPart.Shader = "Kinemium"
 newPart.Transparency = 0
 newPart.MeshId = "./src/template/meshes/other.obj"
 newPart.Color = Color3.new(0.466667, 0, 1)

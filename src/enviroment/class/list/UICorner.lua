@@ -5,7 +5,7 @@ local Vector2 = require("@Vector2")
 local propTable = {
 	CornerRadius = UDim.new(0, 15),
 	Name = "UICorner",
-	BaseClass = "kinetica.uimodifier",
+	BaseClass = "Kinemium.uimodifier",
 }
 
 return {

@@ -6,9 +6,9 @@ local UDim2 = require("@UDim2")
 local UDim = require("@UDim")
 local Vector2 = require("@Vector2")
 
-local logic = require("@kinetica.2dbutton")
+local logic = require("@Kinemium.2dbutton")
 
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 
 local Frame = require("@Frame")
 local TextLabel = require("@TextLabel")

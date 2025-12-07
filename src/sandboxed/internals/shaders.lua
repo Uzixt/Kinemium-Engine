@@ -1,4 +1,4 @@
-local KineticaShaderService = game:GetService("KineticaShaderService")
+local KinemiumShaderService = game:GetService("KinemiumShaderService")
 local fs = zune.fs
 
 local entries = fs.entries
@@ -19,5 +19,5 @@ for _, shaderFolder in pairs(entries("./src/shaders")) do
 		end
 		print(fragment, vertex)
 	end
-	KineticaShaderService.LoadShader(shaderFolder.name, vertex, fragment)
+	KinemiumShaderService.LoadShader(shaderFolder.name, vertex, fragment)
 end

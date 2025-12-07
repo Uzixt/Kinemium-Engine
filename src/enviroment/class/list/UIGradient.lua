@@ -12,7 +12,7 @@ local propTable = {
 	}),
 	Rotation = 0,
 	Name = "UIGradient",
-	BaseClass = "kinetica.uimodifier",
+	BaseClass = "Kinemium.uimodifier",
 }
 
 return {

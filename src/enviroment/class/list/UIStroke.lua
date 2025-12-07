@@ -7,7 +7,7 @@ local propTable = {
 	Transparency = 0,
 	ApplyStrokeMode = "Border",
 	Name = "UIStroke",
-	BaseClass = "kinetica.uimodifier",
+	BaseClass = "Kinemium.uimodifier",
 }
 
 return {

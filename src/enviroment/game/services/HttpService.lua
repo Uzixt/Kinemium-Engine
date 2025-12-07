@@ -1,5 +1,5 @@
 local Instance = require("@Instance")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 local net = zune.net
 
 local HttpService = Instance.new("HttpService")

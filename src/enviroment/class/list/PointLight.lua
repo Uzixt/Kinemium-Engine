@@ -11,7 +11,7 @@ local propTable = {
 	Shadows = true, -- casts shadows or not
 	Enabled = true, -- whether the light is active
 	Name = "PointLight",
-	BaseClass = "kinetica.light",
+	BaseClass = "Kinemium.light",
 	CFrame = CFrame.new(0, 0, 0),
 }
 

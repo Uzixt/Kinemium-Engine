@@ -1,3 +1,3 @@
-local KineticaFontService = game:GetService("KineticaFontService")
+local KinemiumFontService = game:GetService("KinemiumFontService")
 
---KineticaFontService.LoadAllEngineFonts()
+--KinemiumFontService.LoadAllEngineFonts()

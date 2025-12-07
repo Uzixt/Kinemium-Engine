@@ -1,5 +1,5 @@
 local Instance = require("@Instance")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 
 local PlayerGui = Instance.new("PlayerGui")
 
@@ -11,7 +11,7 @@ PlayerGui.InitRenderer = function(renderer, renderer_signal)
 	PlayerGui.ChildAdded:Connect(function(child)
 		if child:IsA("ScreenGui") then
 			for _, screengui_child in pairs(child:GetDescendants()) do
-				if screengui_child.BaseClass == "kinetica.uimodifier" then
+				if screengui_child.BaseClass == "Kinemium.uimodifier" then
 					continue
 				end
 				renderer.AddToGuiRenderingPool(function()
@@ -20,7 +20,7 @@ PlayerGui.InitRenderer = function(renderer, renderer_signal)
 			end
 
 			child.ChildAdded:Connect(function(new)
-				if new.BaseClass == "kinetica.uimodifier" then
+				if new.BaseClass == "Kinemium.uimodifier" then
 					return
 				end
 				renderer.AddToGuiRenderingPool(function()

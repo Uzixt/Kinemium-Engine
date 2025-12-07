@@ -1,11 +1,12 @@
 local Instance = require("@Instance")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 
 local RunService = Instance.new("RunService")
 
 local RenderStepped = signal.new()
 local Heartbeat = signal.new()
 local Stepped = signal.new()
+local PreRender = signal.new()
 
 local renderBindings = {}
 
@@ -30,19 +31,48 @@ local function runRenderBindings(dt)
 	end
 end
 
+local status = {
+	IsClient = true,
+	IsServer = false,
+	IsStudio = true,
+	IsRunMode = false,
+	IsRunning = false,
+	IsEdit = true,
+}
+
 RunService.InitRenderer = function(renderer, renderer_signal)
 	RunService:SetProperties({
 		RenderStepped = RenderStepped,
 		Heartbeat = Heartbeat,
 		Stepped = Stepped,
-		IsStudio = true,
-		IsServer = false,
+		PreRender = PreRender,
+
+		IsClient = function()
+			return status.IsClient
+		end,
+		IsServer = function()
+			return status.IsServer
+		end,
+		IsStudio = function()
+			return status.IsStudio
+		end,
+		IsRunMode = function()
+			return status.IsRunMode
+		end,
+		IsRunning = function()
+			return status.IsRunning
+		end,
+		IsEdit = function()
+			return status.IsEdit
+		end,
 	})
 
 	renderer_signal:Connect(function(route, dt)
 		if route == "RenderStepped" then
 			RenderStepped:Fire(dt)
 			runRenderBindings(dt)
+		elseif route == "PreRender" then
+			PreRender:Fire(dt)
 		elseif route == "Heartbeat" then
 			Heartbeat:Fire(dt)
 		elseif route == "Stepped" then

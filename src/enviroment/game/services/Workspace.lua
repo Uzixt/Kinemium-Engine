@@ -35,7 +35,7 @@ local function loopRegister(v, renderer)
 			end
 		end)
 
-		if child.BaseClass and child.BaseClass == "kinetica.light" then
+		if child.BaseClass and child.BaseClass == "Kinemium.light" then
 			renderer.AddToRegistry(function()
 				return child
 			end)

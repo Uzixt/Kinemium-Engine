@@ -4,7 +4,7 @@ local CFrame = require("@CFrame")
 local Enum = require("@EnumMap")
 local UDim2 = require("@UDim2")
 local UDim = require("@UDim")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 local Vector2 = require("@Vector2")
 
 local segments = 16
@@ -72,7 +72,7 @@ local propTable = {
 	ClipsDescendants = false,
 	ZIndex = 1,
 	AnchorPoint = Vector2.new(0, 0),
-	Name = "KineticaGui",
+	Name = "KinemiumGui",
 	MouseIsInObject = false,
 
 	render = function(lib, object, dt, structs, renderer)

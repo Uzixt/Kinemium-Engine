@@ -1,9 +1,9 @@
-local datatypes = require("@kinetica.datatypes.get")
-local Registry = require("@kinetica.registry")
+local datatypes = require("@Kinemium.datatypes.get")
+local Registry = require("@Kinemium.registry")
 local DataModel = require("@DataModel")
 local EnumMap = require("@EnumMap")
 local PlayerGui = require("@PlayerGui")
-local sandboxer = require("@sandboxer")
+--local sandboxer = require("@sandboxer")
 
 return function(renderer)
 	local mainDatamodel = DataModel.new(renderer, { "StarterGui" })
@@ -18,17 +18,24 @@ return function(renderer)
 		end,
 	}
 	data.Enum = EnumMap
-	data.task = zune.task
+	data.task = {
+		cancel = zune.task.cancel,
+		defer = zune.task.defer,
+		delay = zune.task.delay,
+		spawn = zune.task.spawn,
+		wait = zune.task.wait,
+	}
 	data.game = mainDatamodel
 	data.workspace = mainDatamodel:GetService("Workspace")
 	data.shared = shared
 	data._G = _G
 	data.wait = zune.task.wait
-	data.kinetica = {
+	data.Kinemium = {
 		version = 1.0,
-		window = require("@kinetica.window")(renderer.lib),
-		--jolt = require("@kinetica.jolt"),
+		window = require("@Kinemium.window")(renderer.lib),
+		--jolt = require("@Kinemium.jolt"),
 	}
+	--[[
 	data.vrequire = function(Instance)
 		if type(Instance) == "table" then
 			if Instance.ClassName == "ModuleScript" then
@@ -43,6 +50,7 @@ return function(renderer)
 			return
 		end
 	end
+	--]]
 	data.gettype = function(v)
 		if type(v) == "table" then
 			if v.type then

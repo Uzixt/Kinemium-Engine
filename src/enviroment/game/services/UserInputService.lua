@@ -1,5 +1,5 @@
 local Instance = require("@Instance")
-local signal = require("@kinetica.signal")
+local signal = require("@Kinemium.signal")
 
 local UserInputService = Instance.new("UserInputService")
 

@@ -4,7 +4,7 @@ local UDim2 = require("@UDim2")
 local Enum = require("@EnumMap")
 local Frame = require("@Frame")
 local ImageLabel = require("@ImageLabel")
-local logic = require("@kinetica.2dbutton")
+local logic = require("@Kinemium.2dbutton")
 
 local propTable = {
 	AutoButtonColor = true,

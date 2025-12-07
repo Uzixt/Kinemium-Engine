@@ -1,7 +1,7 @@
-local KineticaPhysicsService = game:GetService("KineticaPhysicsService")
+local KinemiumPhysicsService = game:GetService("KinemiumPhysicsService")
 
 --[[
-print("=== KINETICA PHYSICS TESTS ===")
+print("=== Kinemium PHYSICS TESTS ===")
 
 local function createPart(pos, size, color, anchored, mass, restitution, friction)
 	local part = Instance.new("Part")
@@ -30,14 +30,14 @@ local box = createPart(Vector3.new(5, 15, 0), Vector3.new(2, 2, 2), Color3.new(0
 
 task.wait(2)
 print("\n[TEST 4] Applying impulse to box...")
-KineticaPhysicsService.ApplyImpulse(KineticaPhysicsService.GetBody(box), Vector3.new(-20, 5, 0))
+KinemiumPhysicsService.ApplyImpulse(KinemiumPhysicsService.GetBody(box), Vector3.new(-20, 5, 0))
 
 task.wait(3)
 print("\n[TEST 5] Creating rope constraint (pendulum)...")
 local anchor = createPart(Vector3.new(-10, 20, 0), Vector3.new(0.5, 0.5, 0.5), Color3.new(0.5, 0.5, 0.5), true)
 local pendulum = createPart(Vector3.new(-10, 10, 0), Vector3.new(1, 1, 1), Color3.new(1, 1, 0), false, 3, 0.7, 0.3)
-KineticaPhysicsService.CreateRopeConstraint(anchor, pendulum, 10)
-KineticaPhysicsService.ApplyImpulse(KineticaPhysicsService.GetBody(pendulum), Vector3.new(15, 0, 0))
+KinemiumPhysicsService.CreateRopeConstraint(anchor, pendulum, 10)
+KinemiumPhysicsService.ApplyImpulse(KinemiumPhysicsService.GetBody(pendulum), Vector3.new(15, 0, 0))
 
 task.wait(3)
 print("\n[TEST 6] Creating chain with ball sockets...")
@@ -54,7 +54,7 @@ for i = 1, 5 do
 	)
 
 	if i > 1 then
-		KineticaPhysicsService.CreateBallSocketConstraint(
+		KinemiumPhysicsService.CreateBallSocketConstraint(
 			chainLinks[i - 1],
 			chainLinks[i],
 			Vector3.new(0, -0.6, 0),
@@ -68,11 +68,11 @@ print("\n[TEST 7] Creating spring constraint...")
 local springAnchor = createPart(Vector3.new(15, 20, 0), Vector3.new(0.5, 0.5, 0.5), Color3.new(0.8, 0.8, 0.8), true)
 local springWeight =
 	createPart(Vector3.new(15, 15, 0), Vector3.new(1.5, 1.5, 1.5), Color3.new(0, 1, 0), false, 5, 0.6, 0.4)
-KineticaPhysicsService.CreateSpringConstraint(springAnchor, springWeight, 5, 0.3)
+KinemiumPhysicsService.CreateSpringConstraint(springAnchor, springWeight, 5, 0.3)
 
 task.wait(2)
 print("\n[TEST 8] Applying torque to box (spin it)...")
-KineticaPhysicsService.ApplyTorque(KineticaPhysicsService.GetBody(box), Vector3.new(0, 50, 0))
+KinemiumPhysicsService.ApplyTorque(KinemiumPhysicsService.GetBody(box), Vector3.new(0, 50, 0))
 
 task.wait(3)
 print("\n[TEST 9] Creating welded structure...")
@@ -82,26 +82,26 @@ local pillar1 =
 local pillar2 =
 	createPart(Vector3.new(-14, 12, 0), Vector3.new(0.5, 3, 0.5), Color3.new(0.5, 0.3, 0.1), false, 3, 0.4, 0.5)
 local roof = createPart(Vector3.new(-15, 14, 0), Vector3.new(3, 0.5, 3), Color3.new(0.7, 0.4, 0.2), false, 4, 0.4, 0.5)
-KineticaPhysicsService.CreateWeldConstraint(base, pillar1)
-KineticaPhysicsService.CreateWeldConstraint(base, pillar2)
-KineticaPhysicsService.CreateWeldConstraint(pillar1, roof)
-KineticaPhysicsService.CreateWeldConstraint(pillar2, roof)
+KinemiumPhysicsService.CreateWeldConstraint(base, pillar1)
+KinemiumPhysicsService.CreateWeldConstraint(base, pillar2)
+KinemiumPhysicsService.CreateWeldConstraint(pillar1, roof)
+KinemiumPhysicsService.CreateWeldConstraint(pillar2, roof)
 
 task.wait(2)
 print("\n[TEST 10] Applying force to welded structure...")
-KineticaPhysicsService.ApplyForce(KineticaPhysicsService.GetBody(base), Vector3.new(100, 0, 0))
+KinemiumPhysicsService.ApplyForce(KinemiumPhysicsService.GetBody(base), Vector3.new(100, 0, 0))
 
 task.wait(3)
 print("\n[TEST 11] Creating rod constraint (rigid connection)...")
 local rodA = createPart(Vector3.new(20, 18, 0), Vector3.new(1, 1, 1), Color3.new(1, 0, 1), false, 4, 0.5, 0.4)
 local rodB = createPart(Vector3.new(23, 18, 0), Vector3.new(1, 1, 1), Color3.new(1, 0.5, 0), false, 4, 0.5, 0.4)
-KineticaPhysicsService.CreateRodConstraint(rodA, rodB, 3)
+KinemiumPhysicsService.CreateRodConstraint(rodA, rodB, 3)
 
 task.wait(2)
 print("\n[TEST 12] Creating hinge constraint (door)...")
 local doorFrame = createPart(Vector3.new(-20, 5, 0), Vector3.new(0.5, 4, 0.5), Color3.new(0.3, 0.3, 0.3), true)
 local door = createPart(Vector3.new(-21.5, 5, 0), Vector3.new(3, 4, 0.2), Color3.new(0.6, 0.4, 0.2), false, 6, 0.3, 0.6)
-KineticaPhysicsService.CreateHingeConstraint(
+KinemiumPhysicsService.CreateHingeConstraint(
 	doorFrame,
 	door,
 	Vector3.new(0, 1, 0),
@@ -111,7 +111,7 @@ KineticaPhysicsService.CreateHingeConstraint(
 
 task.wait(1)
 print("\n[TEST 13] Push the door...")
-KineticaPhysicsService.ApplyForce(KineticaPhysicsService.GetBody(door), Vector3.new(0, 0, 50))
+KinemiumPhysicsService.ApplyForce(KinemiumPhysicsService.GetBody(door), Vector3.new(0, 0, 50))
 
 task.wait(3)
 print("\n[TEST 14] Stress test - dropping multiple boxes...")
@@ -130,19 +130,19 @@ end
 
 task.wait(3)
 print("\n[TEST 15] Changing gravity...")
-KineticaPhysicsService.SetGravity(Vector3.new(0, -20, 0))
+KinemiumPhysicsService.SetGravity(Vector3.new(0, -20, 0))
 print("Gravity increased!")
 
 task.wait(3)
 print("\n[TEST 16] Low gravity mode...")
-KineticaPhysicsService.SetGravity(Vector3.new(0, -2, 0))
+KinemiumPhysicsService.SetGravity(Vector3.new(0, -2, 0))
 print("Low gravity enabled!")
 
 local moonBox = createPart(Vector3.new(0, 30, 5), Vector3.new(2, 2, 2), Color3.new(0.8, 0.8, 1), false, 3, 0.8, 0.1)
 
 task.wait(5)
 print("\n[TEST 17] Resetting gravity...")
-KineticaPhysicsService.SetGravity(Vector3.new(0, -9.81, 0))
+KinemiumPhysicsService.SetGravity(Vector3.new(0, -9.81, 0))
 
 task.wait(2)
 print("\n=== ALL TESTS COMPLETE ===")
