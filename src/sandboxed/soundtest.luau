@@ -179,7 +179,6 @@ local function createLights()
 	moonLight.Parent = workspace
 end
 
--- Build the island
 print("Building island scene...")
 createWater()
 createTerrain()

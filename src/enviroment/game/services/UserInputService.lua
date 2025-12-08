@@ -7,6 +7,10 @@ local InputBegan = signal.new()
 local InputEnded = signal.new()
 local MouseMoved = signal.new()
 local MouseWheel = signal.new()
+local GamepadConnected = signal.new()
+local GamepadDisconnected = signal.new()
+
+local active_keys = {}
 
 UserInputService.InitRenderer = function(renderer, renderer_signal)
 	local Enum = require("@EnumMap")
@@ -64,36 +68,38 @@ UserInputService.InitRenderer = function(renderer, renderer_signal)
 	end
 
 	renderer_signal:Connect(function(route, data)
-		if route == "IsKeyDown" then
-			local key = findSuitable(data)
-			if key then
-				InputBegan:Fire({
-					KeyCode = key,
-					UserInputType = Enum.UserInputType.Keyboard,
-					UserInputState = Enum.UserInputState.Begin,
-				})
-			end
-		end
+		local key
 
-		if route == "IsKeyReleased" then
-			local key = findSuitable(data)
+		if route == "IsKeyDown" then
+			key = findSuitable(data)
+			if key then
+				InputBegan:FireOncePerPress(
+					"Key:" .. tostring(key.Value),
+					true, -- pressed
+					{
+						KeyCode = key,
+						UserInputType = Enum.UserInputType.Keyboard,
+						UserInputState = Enum.UserInputState.Begin,
+					}
+				)
+				active_keys[key] = true
+			end
+		elseif route == "IsKeyReleased" then
+			key = findSuitable(data)
 			if key then
 				InputEnded:Fire({
 					KeyCode = key,
 					UserInputType = Enum.UserInputType.Keyboard,
 					UserInputState = Enum.UserInputState.End,
 				})
+				active_keys[key] = false
 			end
-		end
-
-		if route == "MouseMoved" then
+		elseif route == "MouseMoved" then
 			MouseMoved:Fire({
 				UserInputType = Enum.UserInputType.MouseMovement,
 				Delta = data,
 			})
-		end
-
-		if route == "MouseWheel" then
+		elseif route == "MouseWheel" then
 			MouseWheel:Fire({
 				UserInputType = Enum.UserInputType.MouseWheel,
 				Delta = data,

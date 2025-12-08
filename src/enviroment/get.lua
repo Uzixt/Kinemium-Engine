@@ -3,14 +3,12 @@ local Registry = require("@Kinemium.registry")
 local DataModel = require("@DataModel")
 local EnumMap = require("@EnumMap")
 local PlayerGui = require("@PlayerGui")
---local sandboxer = require("@sandboxer")
 
 return function(renderer)
 	local mainDatamodel = DataModel.new(renderer, { "StarterGui" })
 	local data = datatypes
 
 	local shared = {}
-	local _G = {}
 
 	data.Instance = {
 		new = function(class)
@@ -28,19 +26,19 @@ return function(renderer)
 	data.game = mainDatamodel
 	data.workspace = mainDatamodel:GetService("Workspace")
 	data.shared = shared
-	data._G = _G
 	data.wait = zune.task.wait
 	data.Kinemium = {
 		version = 1.0,
 		window = require("@Kinemium.window")(renderer.lib),
 		--jolt = require("@Kinemium.jolt"),
 	}
-	--[[
-	data.vrequire = function(Instance)
+	data.krequire = function(Instance)
+		local sandboxer = require("@sandboxer")
+
 		if type(Instance) == "table" then
 			if Instance.ClassName == "ModuleScript" then
 				local source = Instance.Source
-				local returned = sandboxer.run(source, "", data)
+				local returned = sandboxer.run(source, Instance.Name, data)
 				if returned then
 					return returned
 				end
@@ -48,10 +46,11 @@ return function(renderer)
 		elseif type(Instance) == "string" then
 			error("Cannot require string")
 			return
+		else
+			error("krequire: cannot require this table; expected ModuleScript")
 		end
 	end
-	--]]
-	data.gettype = function(v)
+	data.ktypeof = function(v)
 		if type(v) == "table" then
 			if v.type then
 				return v.type
@@ -62,7 +61,6 @@ return function(renderer)
 			return type(v)
 		end
 	end
-
 	local players = mainDatamodel:GetService("Players")
 	players.LocalPlayer.PlayerGui = PlayerGui.InitRenderer(renderer, renderer.Signal)
 	players.LocalPlayer.Parent = players

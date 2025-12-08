@@ -1,26 +1,38 @@
 -- LuaCSS by devcell
 -- Ported from roblox..
 --!native
+
+local function printHierarchy(instance, indent)
+	indent = indent or ""
+	for _, child in pairs(instance:GetChildren()) do
+		print(indent .. child.Name, child.ClassName)
+		printHierarchy(child, indent .. "  ") -- add 2 spaces for each level
+	end
+end
+
+-- usage
+printHierarchy(script)
+
 local luacss = {}
-local functions = table.clone(require(script.assets.functions))
-local spr = require(script.libs.spr)
-local types = require(script.assets.Types)
+local functions = table.clone(kinemium.import(script.assets.functions))
+local spr = kinemium.import(script.libs.spr)
+local types = kinemium.import(script.assets.Types)
 local RegisteredComponents = {}
-local Profiler = require(script.debug.profiler)
-local colorModule = require(script.assets.color)
-local guard = require(script.assets.guard)
-local pages = require(script.assets.pages)
-local sharedLib = require(script.assets.sharedlib)
-local signal = require(script.signal)
-local trove = require(script.libs.Trove)
+local Profiler = kinemium.import(script.debug.profiler)
+local colorModule = kinemium.import(script.assets.color)
+local guard = kinemium.import(script.assets.guard)
+local pages = kinemium.import(script.assets.pages)
+local sharedLib = kinemium.import(script.assets.sharedlib)
+local signal = kinemium.import(script.signal)
+local trove = kinemium.import(script.libs.Trove)
 local src = script.src
-local value = require(src.value)
+local value = kinemium.import(src.value)
 local profilerInstance = Profiler.new()
 local enableLogs = false
 local springSettings = { 2, 5 }
 
 --> Printer
-local printer = require(src.printer)
+local printer = kinemium.import(src.printer)
 local log = printer.log
 local error = printer.error
 local warn = printer.warn
@@ -480,11 +492,11 @@ function luacss.extension(extension: types.LuaCSSExtension)
 	if typeof(extension) == "Instance" then
 		if extension:IsA("ModuleScript") then
 			local success, pcallResult = pcall(function(...)
-				return require(extension)
+				return kinemium.import(extension)
 			end)
 
 			if not success then
-				warn("Extension", "Tried to require extension; got result: " .. pcallResult)
+				warn("Extension", "Tried to kinemium.import extension; got result: " .. pcallResult)
 				return
 			end
 			result = table.clone(pcallResult)
@@ -742,7 +754,7 @@ end
 ---   `.Change(newId)` → Changes the ID associated with the object.
 ---   `.Destroy()` → Destroys the object and removes it from the registry.
 function luacss.IdObject(idName: string): types.IdObject
-	assert(type(idName) == "string", "IdObject requires a string id")
+	assert(type(idName) == "string", "IdObject kinemium.imports a string id")
 
 	local methods = {}
 	methods.Value = idName
@@ -798,7 +810,7 @@ end
 --- Creates a new Janitor for cleaning resources automatically.
 ---@return table janitor A new janitor instance.
 function luacss:janitor()
-	local janitor = require(script.libs.Janitor)
+	local janitor = kinemium.import(script.libs.Janitor)
 	return janitor.new()
 end
 
@@ -1257,7 +1269,7 @@ function luacss.component(name, data: types.Object)
 			RegisteredComponents[name] = data
 			result = data
 		else
-			local APIService = require(script.libs.APIService)
+			local APIService = kinemium.import(script.libs.APIService)
 			local properties = APIService:GetProperties(data, true)
 
 			properties.class = data.ClassName
@@ -1291,7 +1303,7 @@ function luacss.component(name, data: types.Object)
 		end,
 		Reload = function()
 			if typeof(data) == "ModuleScript" then
-				local newData = require(data)
+				local newData = kinemium.import(data)
 				return componentObject.Update(newData)
 			end
 			printer.error("Component", `Update failed: invalid type for '{name}'`, nil, enableLogs)
@@ -1304,7 +1316,7 @@ function luacss.component(name, data: types.Object)
 		end,
 		Update = function(newData)
 			if typeof(newData) == "ModuleScript" then
-				newData = require(newData)
+				newData = kinemium.import(newData)
 			end
 
 			if typeof(newData) == "Instance" then
@@ -1349,7 +1361,7 @@ end
 ---@param object Instance The instance to serialize.
 ---@return table serialized The property table.
 function luacss.fromInstance(object: Instance)
-	local APIService = require(script.libs.APIService)
+	local APIService = kinemium.import(script.libs.APIService)
 	local new = APIService:GetProperties(object, true)
 
 	new.class = object.ClassName
@@ -1541,5 +1553,5 @@ function luacss.compile(data: { [string]: types.Object })
 	return created
 end
 
-export type LuaCSS = typeof(luacss)
+--export type LuaCSS = ktypeof(luacss)
 return table.freeze(luacss)

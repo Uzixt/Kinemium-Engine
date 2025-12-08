@@ -1,13 +1,19 @@
 --!strict
 
-local fs = zune.fs
 local ffi = zune.ffi
+local fs = zune.fs
 
 local jolt = require("./jolt")
 
-local export = {}
+-- Load the joltc.dll
+local lib_path = "./src/external/jolt/joltc.dll"
+local lib = ffi.dlopen(lib_path, jolt.def)
 
-export.const = jolt.const
-export.lib = ffi.dlopen("src/external/jolt/joltc.dll", jolt.def)
+local const = jolt -- constants and structs
+
+local export = {
+	lib = lib,
+	const = const,
+}
 
 return export

@@ -7,6 +7,11 @@ local renderer = KinemiumRaylib.renderer
 local rl = KinemiumRaylib.lib
 local structs = KinemiumRaylib.structs
 
+-- raygui linux support isnt added yet
+if zune.platform.os == "Linux" then
+	return
+end
+
 local windowRegistry = {}
 
 local window = require("@Kinemium.rayguiwindow")(rl, structs)

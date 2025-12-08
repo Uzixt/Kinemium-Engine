@@ -43,7 +43,7 @@ local task = zune.task
 local ffi = zune.ffi
 
 local screenWidth = 1800
-local screenHeight = 700
+local screenHeight = 900
 
 local txtureMethods = texture(lib)
 local materialList = txtureMethods.GetMaterials()

@@ -1,6 +1,8 @@
 {
     "aliases": {
         "Vector3": "./src/enviroment/datatypes/Vector3",
+        "Color4": "./src/enviroment/datatypes/Color4",
+        "BoundingBox": "./src/enviroment/datatypes/BoundingBox",
         "Ray": "./src/enviroment/datatypes/Ray",
         "UDim": "./src/enviroment/datatypes/UDim",
         "ColorSequenceKeypoint": "./src/enviroment/datatypes/ColorSequenceKeypoint",
@@ -17,6 +19,7 @@
         "AnchorUtils": "./src/modules/anchor",
         "Instance": "./src/enviroment/class/Instance",
         "Mouse": "./src/enviroment/class/list/Mouse",
+        "ModuleScript": "./src/enviroment/class/list/ModuleScript",
         "Player": "./src/enviroment/class/list/Player",
         "DataModel": "./src/enviroment/game/lib",
         "PlayerGui": "./src/enviroment/game/runtime/PlayerGui",
